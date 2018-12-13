@@ -4,6 +4,7 @@ using System.Runtime.InteropServices;
 using Excel = Microsoft.Office.Interop.Excel;
 using System.Data.OleDb;
 using System.Data;
+using System.Text.RegularExpressions;
 //C:\Windows\Microsoft.NET\Framework\v4.0.30319\csc.exe /t:exe /out:\Users\ctrueman\Desktop\EXECUTE.exe C:\Users\ctrueman\Desktop\program\new.cs /r:C:\Users\ctrueman\Desktop\program\Microsoft.Office.Interop.Excel.dll /r:C:\Users\ctrueman\Desktop\program\Microsoft.Office.Interop.Access.dll
  
  
@@ -16,9 +17,7 @@ namespace RecordsUpdate
 		{
 			
 			ExcelDataExtraction.OpenExcel();
-			
 			DataBase.ConnectToDatabase();
-			
 			Console.ReadLine();
 			
 		}
@@ -39,15 +38,43 @@ namespace RecordsUpdate
 		
 			if (excelApp != null)
 			{			
+				
+			//	string file = @"C:\Users\ctrueman\Desktop\program\test.xlsx";
+			string file = @"Z:\CCU\WO SUBMITTED 2018 JULY THRU DECEMBER\10.15.18.xlsx";
+
+		//		Console.WriteLine(File.Exists(file) ? "File Exists." : "File does not exist.");
+	
+			//	string file = GetString() + ".xlsx";
+				
+			//	string completefile = @"Z:\CCU\WO SUBMITTED 2018 JULY THRU DECEMBER\" + file;
+				
+						
+						
+				Console.WriteLine("wait");
+				Console.ReadLine();
 			
-				Excel.Workbook excelWorkbook = excelApp.Workbooks.Open(@"C:\Users\ctrueman\Desktop\program\test.xlsx", 0, true, 5, "", "", true, Excel.XlPlatform.xlWindows, "\t", false, false, 0, true, 1, 0);
+				Excel.Workbook excelWorkbook = excelApp.Workbooks.Open(file, 0, true, 5, "", "", true, Excel.XlPlatform.xlWindows, "\t", false, false, 0, true, 1, 0);
 				Excel.Worksheet excelWorksheet = (Excel.Worksheet)excelWorkbook.Sheets[1];
 				
 		
+				
 				rowCount =  FindLastRow(excelWorksheet);
-				CustomDataArrays.InitValues(rowCount);				
+				
+				
+				
+				
+				CustomDataArrays.InitValues(rowCount);	
+
+
+				// Console.WriteLine("wait");
+				// Console.ReadLine();
+
+				
 				SaveData(excelWorksheet, rowCount);
-				 		 
+				 	
+
+
+									
 		
 				excelWorkbook.Close();
 				excelApp.Quit();
@@ -55,6 +82,29 @@ namespace RecordsUpdate
 			}
 			
 									
+		}
+		
+		
+		public static string GetString()
+		{
+					
+			
+			Console.Write("Enter spreadsheet name:");
+			string FileName = Console.ReadLine();
+	
+			
+			while (!((Regex.IsMatch(FileName, @"[0-9][0-9]\.[0-9][0-9]\.[0-9][0-9]")) || (Regex.IsMatch(FileName, @"[0-9][0-9]\.[0-9]\.[0-9][0-9]")) || (Regex.IsMatch(FileName, @"[0-9]\.[0-9][0-9]\.[0-9][0-9]")) || (Regex.IsMatch(FileName, @"[0-9]\.[0-9]\.[0-9][0-9]"))))
+			{
+	
+				Console.WriteLine("Please enter a valid move sheet form!");
+				Console.WriteLine("Please enter a spreadsheet file to look for:");
+				
+				FileName = Console.ReadLine();
+			}
+			
+
+			
+			return FileName;
 		}
 	
 				
@@ -64,6 +114,9 @@ namespace RecordsUpdate
 			int row = 9;
 			string[] Name = new string[3];
 			
+			
+			
+			
 			for(int i=0; i < rowCount; i++)
 			{
 				 
@@ -72,8 +125,18 @@ namespace RecordsUpdate
 				 TempName = Convert.ToString(((Excel.Range)excelWorksheet.Cells[row, 4]).Value2);
 				 Name = TempName.Split(' ');
 
-				 CustomDataArrays.first[i] = Name[0];
-				 CustomDataArrays.last[i] = Name[1];
+				 if(Name.Length == 1)
+				 {	 
+					 CustomDataArrays.last[i] = CustomDataArrays.first[i] = Name[0];
+					
+				 }
+				 else
+				 {
+					 CustomDataArrays.first[i] = Name[0];
+					 CustomDataArrays.last[i] = Name[1];
+				 
+				 }	
+				 
 				 
 				 CustomDataArrays.division[i] = Convert.ToString(((Excel.Range)excelWorksheet.Cells[row, 3]).Value2);
 				 CustomDataArrays.number[i] = Convert.ToString(((Excel.Range)excelWorksheet.Cells[row, 6]).Value2);
@@ -85,14 +148,14 @@ namespace RecordsUpdate
 				 
 				 FloorNumber(i,temp);
 				
-				 Console.WriteLine(CustomDataArrays.division[i]);
-				 Console.WriteLine(CustomDataArrays.number[i]);
-				 Console.WriteLine(CustomDataArrays.floor[i]);
-				 Console.WriteLine(CustomDataArrays.riser[i]);
-				 Console.WriteLine(CustomDataArrays.sio[i]);
-				 Console.WriteLine(CustomDataArrays.cubicle[i]);
+				 // Console.WriteLine(CustomDataArrays.division[i]);
+				 // Console.WriteLine(CustomDataArrays.number[i]);
+				 // Console.WriteLine(CustomDataArrays.floor[i]);
+				 // Console.WriteLine(CustomDataArrays.riser[i]);
+				 // Console.WriteLine(CustomDataArrays.sio[i]);
+				 // Console.WriteLine(CustomDataArrays.cubicle[i]);
 						
-				row++;
+			     row++;
 				
 			}
 				
@@ -170,27 +233,22 @@ namespace RecordsUpdate
 
 			try
 			{
+			
 				string date = DateTime.Now.ToString("MM/dd/yyy");
-				
-				Console.WriteLine("PRINTING TIME:");
 			
 				for(int j = 0; j < ExcelDataExtraction.rowCount; j++)
 				{
-					
-					Console.WriteLine("HIBOI");						  
-					string cmd = "UPDATE [SERVICE MAIN TABLE] SET Divn='" + CustomDataArrays.division[j] + "',FirstName='" + CustomDataArrays.first[j] + "',LastName='" + CustomDataArrays.last[j] + "', FLOOR='" + CustomDataArrays.floor[j] + "',RISER='" + CustomDataArrays.riser[j] + "',SIO='" + CustomDataArrays.sio[j] + "',CUBICLE='" + CustomDataArrays.cubicle[j] + "',PCAUpdtDt='" + date + "',DivnChgDt='" + date + "' WHERE PhoneNbr= '" + CustomDataArrays.number[j] + "'";			
+										  
+					string cmd = "UPDATE [SERVICE MAIN TABLE] SET Divn='" + CustomDataArrays.division[j] + "',[First Name]='" + CustomDataArrays.first[j] + "',[Last Name]='" + CustomDataArrays.last[j] + "', FLOOR='" + CustomDataArrays.floor[j] + "',RISER='" + CustomDataArrays.riser[j] + "',SIO='" + CustomDataArrays.sio[j] + "',CUBICLE='" + CustomDataArrays.cubicle[j] + "',PCAUpdtDt='" + date + "',DivnChgDt='" + date + "' WHERE [Phone Nbr]= '" + CustomDataArrays.number[j] + "'";			
 					Modify = new OleDbCommand(cmd, MyConn);
 					changedValues = Modify.ExecuteNonQuery();	
-					Console.WriteLine(changedValues);
+					// Console.WriteLine(changedValues);
 					
 				}
-				Console.WriteLine("after console writes:");
+				// Console.WriteLine("after console writes:");
 				
 				
-				
-				
-				
-						
+			
 			}
 			
 			catch(Exception ex)
