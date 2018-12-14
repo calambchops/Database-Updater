@@ -18,6 +18,7 @@ namespace RecordsUpdate
 			
 			ExcelDataExtraction.OpenExcel();
 			DataBase.ConnectToDatabase();
+			Console.WriteLine("Updates finished...");
 			Console.ReadLine();
 			
 		}
@@ -38,44 +39,25 @@ namespace RecordsUpdate
 		
 			if (excelApp != null)
 			{			
-				
-			//	string file = @"C:\Users\ctrueman\Desktop\program\test.xlsx";
-			string file = @"Z:\CCU\WO SUBMITTED 2018 JULY THRU DECEMBER\10.15.18.xlsx";
+			
+			//	string file = @"Z:\CCU\WO SUBMITTED 2018 JULY THRU DECEMBER\10.15.18.xlsx";
 
 		//		Console.WriteLine(File.Exists(file) ? "File Exists." : "File does not exist.");
 	
-			//	string file = GetString() + ".xlsx";
+				string file = GetString() + ".xlsx";
 				
-			//	string completefile = @"Z:\CCU\WO SUBMITTED 2018 JULY THRU DECEMBER\" + file;
+				string completefile = @"Z:\CCU\WO SUBMITTED 2018 JULY THRU DECEMBER\" + file;
 				
-						
-						
-				Console.WriteLine("wait");
-				Console.ReadLine();
 			
-				Excel.Workbook excelWorkbook = excelApp.Workbooks.Open(file, 0, true, 5, "", "", true, Excel.XlPlatform.xlWindows, "\t", false, false, 0, true, 1, 0);
+				Excel.Workbook excelWorkbook = excelApp.Workbooks.Open(completefile, 0, true, 5, "", "", true, Excel.XlPlatform.xlWindows, "\t", false, false, 0, true, 1, 0);
 				Excel.Worksheet excelWorksheet = (Excel.Worksheet)excelWorkbook.Sheets[1];
-				
-		
-				
+					
+			
 				rowCount =  FindLastRow(excelWorksheet);
-				
-				
-				
-				
 				CustomDataArrays.InitValues(rowCount);	
-
-
-				// Console.WriteLine("wait");
-				// Console.ReadLine();
-
-				
 				SaveData(excelWorksheet, rowCount);
 				 	
-
-
-									
-		
+	
 				excelWorkbook.Close();
 				excelApp.Quit();
  
@@ -99,8 +81,11 @@ namespace RecordsUpdate
 				Console.WriteLine("Please enter a valid move sheet form!");
 				Console.WriteLine("Please enter a spreadsheet file to look for:");
 				
+				
 				FileName = Console.ReadLine();
 			}
+			
+			
 			
 
 			
@@ -167,6 +152,18 @@ namespace RecordsUpdate
 		{
 			
 			 string MyString = temp;
+			 
+			 char secondletter = MyString[1];
+		// string tempor = MyString.Substring(1,1);
+		// string trimmedtemp = tempor.Trim();
+		
+		
+			// Console.WriteLine(firstletter);
+			// Console.WriteLine(secondletter);
+				
+				
+			// Console.WriteLine(MyString.Substring(0,2));
+			// Console.ReadLine();
 			
 			 if(MyString == "MPOE")
 			 {
@@ -175,8 +172,16 @@ namespace RecordsUpdate
 				return;
 			 }
 				
-			 CustomDataArrays.floor[i] = MyString.Substring(0,1);
-			
+			 else if(secondletter>='0' && secondletter<='9')
+			 {
+				CustomDataArrays.floor[i] = MyString.Substring(0,2);
+			 
+			 }
+			 
+			 else
+			 {
+				CustomDataArrays.floor[i] = MyString.Substring(0,1);
+			 }
 
 		}
 		
@@ -223,7 +228,7 @@ namespace RecordsUpdate
 		public static void ConnectToDatabase()
 		{
 		
-			string ConnStr = "Provider=Microsoft.ACE.OLEDB.12.0;Data Source=C:\\Users\\ctrueman\\Desktop\\test.mdb;Jet OLEDB:Database Password=job;";
+			string ConnStr = "Provider=Microsoft.ACE.OLEDB.12.0;Data Source=W:\\IOS\\IA\\CCU\\Service Record DB\\Service.mdb;Jet OLEDB:Database Password=job;";
 			OleDbConnection MyConn = new OleDbConnection(ConnStr);
 			MyConn.Open();
 			
