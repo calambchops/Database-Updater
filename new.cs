@@ -128,7 +128,14 @@ namespace RecordsUpdate
 				 CustomDataArrays.riser[i] = Convert.ToString(((Excel.Range)excelWorksheet.Cells[row, 9]).Value2);
 				 CustomDataArrays.sio[i] = Convert.ToString(((Excel.Range)excelWorksheet.Cells[row, 11]).Value2);
 				 CustomDataArrays.cubicle[i] = Convert.ToString(((Excel.Range)excelWorksheet.Cells[row, 13]).Value2);
+				 
+				 
+				 if(CustomDataArrays.cubicle[i].Length == 0)
+				 {
+					CustomDataArrays.cubicle[i] = " ";
 				
+				 }
+				 
 				 string temp = CustomDataArrays.sio[i] = Convert.ToString(((Excel.Range)excelWorksheet.Cells[row, 11]).Value2);
 				 
 				 FloorNumber(i,temp);
@@ -154,6 +161,7 @@ namespace RecordsUpdate
 			 string MyString = temp;
 			 
 			 char secondletter = MyString[1];
+			 
 		// string tempor = MyString.Substring(1,1);
 		// string trimmedtemp = tempor.Trim();
 		
@@ -243,7 +251,7 @@ namespace RecordsUpdate
 			
 				for(int j = 0; j < ExcelDataExtraction.rowCount; j++)
 				{
-										  
+					//put empty string into database					  
 					string cmd = "UPDATE [SERVICE MAIN TABLE] SET Divn='" + CustomDataArrays.division[j] + "',[First Name]='" + CustomDataArrays.first[j] + "',[Last Name]='" + CustomDataArrays.last[j] + "', FLOOR='" + CustomDataArrays.floor[j] + "',RISER='" + CustomDataArrays.riser[j] + "',SIO='" + CustomDataArrays.sio[j] + "',CUBICLE='" + CustomDataArrays.cubicle[j] + "',PCAUpdtDt='" + date + "',DivnChgDt='" + date + "' WHERE [Phone Nbr]= '" + CustomDataArrays.number[j] + "'";			
 					Modify = new OleDbCommand(cmd, MyConn);
 					changedValues = Modify.ExecuteNonQuery();	
