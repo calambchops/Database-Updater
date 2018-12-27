@@ -17,7 +17,9 @@ namespace RecordsUpdate
 		{
 			
 			ExcelDataExtraction.OpenExcel();
+			
 			DataBase.ConnectToDatabase();
+			Console.ReadLine();
 			Console.WriteLine("Updates finished...");
 			Console.ReadLine();
 			
@@ -55,6 +57,8 @@ namespace RecordsUpdate
 			
 				rowCount =  FindLastRow(excelWorksheet);
 				CustomDataArrays.InitValues(rowCount);	
+				
+				
 				SaveData(excelWorksheet, rowCount);
 				 	
 	
@@ -139,7 +143,10 @@ namespace RecordsUpdate
 				 string temp = CustomDataArrays.sio[i] = Convert.ToString(((Excel.Range)excelWorksheet.Cells[row, 11]).Value2);
 				 
 				 FloorNumber(i,temp);
-				
+			
+				 DeterminePurpose(i,temp);
+					
+	
 				 // Console.WriteLine(CustomDataArrays.division[i]);
 				 // Console.WriteLine(CustomDataArrays.number[i]);
 				 // Console.WriteLine(CustomDataArrays.floor[i]);
@@ -154,7 +161,24 @@ namespace RecordsUpdate
 		}
 		
 		
-				
+		static void DeterminePurpose(int i, string temp)
+		{
+			string MyString = temp;
+			
+			 if(MyString == "MPOE")
+			 {
+				CustomDataArrays.purpose[i] = "LEFT AT MPOE";
+			 
+			 }
+			 
+			 else
+				CustomDataArrays.purpose[i] = "DESK PHONE";
+		
+		
+		}
+
+
+		
 		static void FloorNumber(int i, string temp)
 		{
 			
@@ -244,6 +268,7 @@ namespace RecordsUpdate
 			OleDbCommand Modify = null;
 			
 
+
 			try
 			{
 			
@@ -252,7 +277,8 @@ namespace RecordsUpdate
 				for(int j = 0; j < ExcelDataExtraction.rowCount; j++)
 				{
 					//put empty string into database					  
-					string cmd = "UPDATE [SERVICE MAIN TABLE] SET Divn='" + CustomDataArrays.division[j] + "',[First Name]='" + CustomDataArrays.first[j] + "',[Last Name]='" + CustomDataArrays.last[j] + "', FLOOR='" + CustomDataArrays.floor[j] + "',RISER='" + CustomDataArrays.riser[j] + "',SIO='" + CustomDataArrays.sio[j] + "',CUBICLE='" + CustomDataArrays.cubicle[j] + "',PCAUpdtDt='" + date + "',DivnChgDt='" + date + "' WHERE [Phone Nbr]= '" + CustomDataArrays.number[j] + "'";			
+					string cmd = "UPDATE [SERVICE MAIN TABLE] SET Divn='" + CustomDataArrays.division[j] + "',[First Name]='" + CustomDataArrays.first[j] + "',Purpose='" + CustomDataArrays.purpose[j] + "',[Last Name]='" + CustomDataArrays.last[j] + "', FLOOR='" + CustomDataArrays.floor[j] + "',RISER='" + CustomDataArrays.riser[j] + "',SIO='" + CustomDataArrays.sio[j] + "',CUBICLE='" + CustomDataArrays.cubicle[j] +  "',PCAUpdtDt='" + date + "',DivnChgDt='" + date + "' WHERE [Phone Nbr]= '" + CustomDataArrays.number[j] + "'";			
+					//"',[ARB Program//Project]='" + CustomDataArrays.purpose[j] +
 					Modify = new OleDbCommand(cmd, MyConn);
 					changedValues = Modify.ExecuteNonQuery();	
 					// Console.WriteLine(changedValues);
@@ -305,6 +331,7 @@ namespace RecordsUpdate
 			p_cubicle = new string[row]; 
 			p_first = new string[row];
 			p_last = new string[row];
+			p_purpose = new string[row];
 		 }
 		 
 		 public static void print(){
@@ -322,8 +349,16 @@ namespace RecordsUpdate
 		 private static string[] p_cubicle; 
 		 private static string[] p_first;
 		 private static string[] p_last;
-		  
+		 private static string[] p_purpose;
 		
+		 
+		 public static string[] purpose{
+		 
+			get {return p_purpose;}
+			set {p_purpose = value;}
+		 
+			}
+		 
 		 public static string[] division{
 		 
 			get {return p_division;}
