@@ -19,7 +19,6 @@ namespace RecordsUpdate
 			ExcelDataExtraction.OpenExcel();
 			
 			DataBase.ConnectToDatabase();
-			Console.ReadLine();
 			Console.WriteLine("Updates finished...");
 			Console.ReadLine();
 			
@@ -133,12 +132,20 @@ namespace RecordsUpdate
 				 CustomDataArrays.sio[i] = Convert.ToString(((Excel.Range)excelWorksheet.Cells[row, 11]).Value2);
 				 CustomDataArrays.cubicle[i] = Convert.ToString(((Excel.Range)excelWorksheet.Cells[row, 13]).Value2);
 				 
-				 
+				 //if cubicle is not known
 				 if(CustomDataArrays.cubicle[i].Length == 0)
 				 {
 					CustomDataArrays.cubicle[i] = " ";
 				
 				 }
+				 
+				 //if we forget to put division name
+				 if(CustomDataArrays.division[i].Length == 0)
+				 {
+					CustomDataArrays.division[i] = " ";
+				
+				 }
+				 
 				 
 				 string temp = CustomDataArrays.sio[i] = Convert.ToString(((Excel.Range)excelWorksheet.Cells[row, 11]).Value2);
 				 
@@ -259,7 +266,7 @@ namespace RecordsUpdate
 	
 		public static void ConnectToDatabase()
 		{
-		
+
 			string ConnStr = "Provider=Microsoft.ACE.OLEDB.12.0;Data Source=W:\\IOS\\IA\\CCU\\Service Record DB\\Service.mdb;Jet OLEDB:Database Password=job;";
 			OleDbConnection MyConn = new OleDbConnection(ConnStr);
 			MyConn.Open();
@@ -267,7 +274,7 @@ namespace RecordsUpdate
 			int changedValues = 0;
 			OleDbCommand Modify = null;
 			
-
+		
 
 			try
 			{
