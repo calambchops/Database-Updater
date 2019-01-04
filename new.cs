@@ -5,6 +5,7 @@ using Excel = Microsoft.Office.Interop.Excel;
 using System.Data.OleDb;
 using System.Data;
 using System.Text.RegularExpressions;
+
 //C:\Windows\Microsoft.NET\Framework\v4.0.30319\csc.exe /t:exe /out:\Users\ctrueman\Desktop\EXECUTE.exe C:\Users\ctrueman\Desktop\program\new.cs /r:C:\Users\ctrueman\Desktop\program\Microsoft.Office.Interop.Excel.dll /r:C:\Users\ctrueman\Desktop\program\Microsoft.Office.Interop.Access.dll
  
  
@@ -12,18 +13,15 @@ namespace RecordsUpdate
 {
 	public class Program
 	{
-	
 		public static void Main()
-		{
-			
+		{	
 			ExcelDataExtraction.OpenExcel();
-			
 			DataBase.ConnectToDatabase();
-			Console.WriteLine("Updates finished...");
-			Console.ReadLine();
 			
+			
+			Console.WriteLine("Updates finished...");
+			Console.ReadLine();		
 		}
-	
 	}
 	
 
@@ -32,12 +30,14 @@ namespace RecordsUpdate
 	
 		public static int rowCount;
 				
-	
+				
 		public static void OpenExcel()
 		{
-		
 			Excel.Application excelApp = new Excel.Application();
-		
+			string[] CompleteFile;
+	//		string ExcelName;
+			string path = @"W:\IOS\IA\CCU";
+			
 			if (excelApp != null)
 			{			
 			
@@ -45,16 +45,27 @@ namespace RecordsUpdate
 
 		//		Console.WriteLine(File.Exists(file) ? "File Exists." : "File does not exist.");
 	
-				string file = GetString() + ".xlsx";
+				// ExcelName = GetString() + ".xlsx";
 				
-				string completefile = @"Z:\CCU\WO SUBMITTED 2018 JULY THRU DECEMBER\" + file;
+	//			string completefile = @"Z:\CCU\WO SUBMITTED 2018 JULY THRU DECEMBER\" + file;
 				
-			
-				Excel.Workbook excelWorkbook = excelApp.Workbooks.Open(completefile, 0, true, 5, "", "", true, Excel.XlPlatform.xlWindows, "\t", false, false, 0, true, 1, 0);
+				// string completefile[] = new string[1];
+				
+				// completefile[0] = GetDirectory(path);
+				
+			//	string[] newstr = GetDirectory(path);
+				
+				CompleteFile = GetDirectory(path);
+				
+				
+				Console.WriteLine(CompleteFile[0]);
+				Console.ReadLine();
+				
+				Excel.Workbook excelWorkbook = excelApp.Workbooks.Open(CompleteFile[0], 0, true, 5, "", "", true, Excel.XlPlatform.xlWindows, "\t", false, false, 0, true, 1, 0);
 				Excel.Worksheet excelWorksheet = (Excel.Worksheet)excelWorkbook.Sheets[1];
 					
 			
-				rowCount =  FindLastRow(excelWorksheet);
+				rowCount = FindLastRow(excelWorksheet);
 				CustomDataArrays.InitValues(rowCount);	
 				
 				
@@ -63,24 +74,68 @@ namespace RecordsUpdate
 	
 				excelWorkbook.Close();
 				excelApp.Quit();
- 
-			}
-			
-									
+			}										
 		}
 		
 		
-		public static string GetString()
+		public static string[] GetDirectory(string path)
 		{
-					
+
+			string ExcelName = GetString();
 			
+			Console.WriteLine(ExcelName);
+			Console.ReadLine();
+			
+			var file = Directory.GetFiles(path, ExcelName, SearchOption.AllDirectories);
+				
+			Console.WriteLine(file.Length);	
+			Console.ReadLine();
+			
+			if (file.Length == 0)
+			{
+			
+				Console.WriteLine("File doesn't exist!");
+				Console.ReadLine();
+				Environment.Exit(0);
+				return null;
+			
+			}
+			else
+			{
+				string completefile = "im in GetDirectory here";
+				Console.WriteLine(completefile);
+		//		Console.WriteLine(file[0]);
+				Console.ReadLine();
+				
+		//	Console.WriteLine(file.GetType());
+			
+				Console.ReadLine();
+				return file;
+			
+			}
+	
+				// if (file == null)
+				// {
+					// string returnval = "File doesn't exist!";
+					// return returnval;
+					// // Handle the file not being found
+				// }
+				// else
+				// {
+					// return;
+					// // The file variable has the *first* occurrence of that filename
+				// }	
+		}
+
+		
+		public static string GetString()
+		{	
 			Console.Write("Enter spreadsheet name:");
 			string FileName = Console.ReadLine();
 	
 			
 			while (!((Regex.IsMatch(FileName, @"[0-9][0-9]\.[0-9][0-9]\.[0-9][0-9]")) || (Regex.IsMatch(FileName, @"[0-9][0-9]\.[0-9]\.[0-9][0-9]")) || (Regex.IsMatch(FileName, @"[0-9]\.[0-9][0-9]\.[0-9][0-9]")) || (Regex.IsMatch(FileName, @"[0-9]\.[0-9]\.[0-9][0-9]"))))
 			{
-	
 				Console.WriteLine("Please enter a valid move sheet form!");
 				Console.WriteLine("Please enter a spreadsheet file to look for:");
 				
@@ -88,26 +143,20 @@ namespace RecordsUpdate
 				FileName = Console.ReadLine();
 			}
 			
-			
-			
-
-			
+			FileName = FileName + ".xlsx";
+						
 			return FileName;
 		}
 	
 				
 		static void SaveData(Excel.Worksheet excelWorksheet, int rowCount)
-		{
-		
+		{	
 			int row = 9;
 			string[] Name = new string[3];
 			
 			
-			
-			
 			for(int i=0; i < rowCount; i++)
-			{
-				 
+			{			 
 				 string TempName;
 				
 				 TempName = Convert.ToString(((Excel.Range)excelWorksheet.Cells[row, 4]).Value2);
@@ -115,14 +164,12 @@ namespace RecordsUpdate
 
 				 if(Name.Length == 1)
 				 {	 
-					 CustomDataArrays.last[i] = CustomDataArrays.first[i] = Name[0];
-					
+					 CustomDataArrays.last[i] = CustomDataArrays.first[i] = Name[0];			
 				 }
 				 else
 				 {
 					 CustomDataArrays.first[i] = Name[0];
-					 CustomDataArrays.last[i] = Name[1];
-				 
+					 CustomDataArrays.last[i] = Name[1];		 
 				 }	
 				 
 				 
@@ -135,15 +182,13 @@ namespace RecordsUpdate
 				 //if cubicle is not known
 				 if(CustomDataArrays.cubicle[i].Length == 0)
 				 {
-					CustomDataArrays.cubicle[i] = " ";
-				
+					CustomDataArrays.cubicle[i] = " ";			
 				 }
 				 
 				 //if we forget to put division name
 				 if(CustomDataArrays.division[i].Length == 0)
 				 {
-					CustomDataArrays.division[i] = " ";
-				
+					CustomDataArrays.division[i] = " ";			
 				 }
 				 
 				 
@@ -152,8 +197,6 @@ namespace RecordsUpdate
 				 FloorNumber(i,temp);
 			
 				 DeterminePurpose(i,temp);
-					
-	
 				 // Console.WriteLine(CustomDataArrays.division[i]);
 				 // Console.WriteLine(CustomDataArrays.number[i]);
 				 // Console.WriteLine(CustomDataArrays.floor[i]);
@@ -161,10 +204,8 @@ namespace RecordsUpdate
 				 // Console.WriteLine(CustomDataArrays.sio[i]);
 				 // Console.WriteLine(CustomDataArrays.cubicle[i]);
 						
-			     row++;
-				
-			}
-				
+			     row++;			
+			}			
 		}
 		
 		
@@ -179,16 +220,14 @@ namespace RecordsUpdate
 			 }
 			 
 			 else
-				CustomDataArrays.purpose[i] = "DESK PHONE";
-		
-		
+				CustomDataArrays.purpose[i] = "DESK PHONE";		
 		}
 
 
 		
 		static void FloorNumber(int i, string temp)
 		{
-			
+		
 			 string MyString = temp;
 			 
 			 char secondletter = MyString[1];
@@ -205,80 +244,64 @@ namespace RecordsUpdate
 			// Console.ReadLine();
 			
 			 if(MyString == "MPOE")
-			 {
-				
+			 {				
 				CustomDataArrays.floor[i] = MyString;
 				return;
 			 }
 				
 			 else if(secondletter>='0' && secondletter<='9')
 			 {
-				CustomDataArrays.floor[i] = MyString.Substring(0,2);
-			 
+				CustomDataArrays.floor[i] = MyString.Substring(0,2);		 
 			 }
 			 
 			 else
 			 {
 				CustomDataArrays.floor[i] = MyString.Substring(0,1);
 			 }
-
 		}
 		
 		
 		
 		static int FindLastRow(Excel.Worksheet excelWorksheet)
-		{
-		
+		{	
 			 int Row = 9;   //starting point in excel sheet
 			 int Count = 0;
 			 bool ValidRow = true;
 			 
 			 while (ValidRow == true)
-			 {
-			   
+			 {	   
 				Excel.Range Range = (Excel.Range)excelWorksheet.Cells[Row, 6]; 
 				//validates using phone number column, 6
 		   
 				if (Range.Value != null)
-				{
-				
+				{			
 					Count++;
 				}
 				else
-				{
-				
+				{			
 				  ValidRow = false;
 				}
 				
-				Row++;
-				
-			 }
-				
-			  return (Count);
-			  
-		}
-		
+				Row++;			
+			 }				
+			  return (Count);			  
+		}	
 	}	
 	
 	
 	public class DataBase
-	{
-	
+	{	
 		public static void ConnectToDatabase()
 		{
-
 			string ConnStr = "Provider=Microsoft.ACE.OLEDB.12.0;Data Source=W:\\IOS\\IA\\CCU\\Service Record DB\\Service.mdb;Jet OLEDB:Database Password=job;";
 			OleDbConnection MyConn = new OleDbConnection(ConnStr);
 			MyConn.Open();
 			
 			int changedValues = 0;
 			OleDbCommand Modify = null;
-			
-		
 
 			try
-			{
-			
+			{			
 				string date = DateTime.Now.ToString("MM/dd/yyy");
 			
 				for(int j = 0; j < ExcelDataExtraction.rowCount; j++)
@@ -292,28 +315,19 @@ namespace RecordsUpdate
 					
 				}
 				// Console.WriteLine("after console writes:");
-				
-				
 			
 			}
 			
 			catch(Exception ex)
 			{
-				Console.WriteLine(ex.Message);
-			
+				Console.WriteLine(ex.Message);	
 			}
 			
 			finally
 			{
-				MyConn.Close();
-			
-			}
-		
-		
+				MyConn.Close();		
+			}	
 		}		
-			
-			
-
 	}
 		
 		
@@ -321,14 +335,10 @@ namespace RecordsUpdate
 	
 	public class CustomDataArrays
 	{
-	
-
 		public static int row;
-	
-	
+		
 		 public static void InitValues(int rowCount)
-		 {
-			
+		 {		
 			row = rowCount;
 			p_division = new string[row];
 		    p_number = new string[row];
@@ -346,8 +356,7 @@ namespace RecordsUpdate
 			Console.WriteLine(CustomDataArrays.row);
 			
 		 }
-		 
-		 
+		 	 
 		 private static string[] p_division;
 		 private static string[] p_number;
 		 private static string[] p_floor;
@@ -357,8 +366,7 @@ namespace RecordsUpdate
 		 private static string[] p_first;
 		 private static string[] p_last;
 		 private static string[] p_purpose;
-		
-		 
+			 
 		 public static string[] purpose{
 		 
 			get {return p_purpose;}
