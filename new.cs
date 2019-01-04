@@ -18,7 +18,6 @@ namespace RecordsUpdate
 			ExcelDataExtraction.OpenExcel();
 			DataBase.ConnectToDatabase();
 			
-			
 			Console.WriteLine("Updates finished...");
 			Console.ReadLine();		
 		}
@@ -35,43 +34,22 @@ namespace RecordsUpdate
 		{
 			Excel.Application excelApp = new Excel.Application();
 			string[] CompleteFile;
-	//		string ExcelName;
+
 			string path = @"W:\IOS\IA\CCU";
 			
 			if (excelApp != null)
 			{			
 			
-			//	string file = @"Z:\CCU\WO SUBMITTED 2018 JULY THRU DECEMBER\10.15.18.xlsx";
-
-		//		Console.WriteLine(File.Exists(file) ? "File Exists." : "File does not exist.");
-	
-				// ExcelName = GetString() + ".xlsx";
-				
-	//			string completefile = @"Z:\CCU\WO SUBMITTED 2018 JULY THRU DECEMBER\" + file;
-				
-				// string completefile[] = new string[1];
-				
-				// completefile[0] = GetDirectory(path);
-				
-			//	string[] newstr = GetDirectory(path);
-				
 				CompleteFile = GetDirectory(path);
-				
-				
-				Console.WriteLine(CompleteFile[0]);
-				Console.ReadLine();
-				
+
 				Excel.Workbook excelWorkbook = excelApp.Workbooks.Open(CompleteFile[0], 0, true, 5, "", "", true, Excel.XlPlatform.xlWindows, "\t", false, false, 0, true, 1, 0);
 				Excel.Worksheet excelWorksheet = (Excel.Worksheet)excelWorkbook.Sheets[1];
 					
-			
 				rowCount = FindLastRow(excelWorksheet);
 				CustomDataArrays.InitValues(rowCount);	
 				
-				
 				SaveData(excelWorksheet, rowCount);
 				 	
-	
 				excelWorkbook.Close();
 				excelApp.Quit();
 			}										
@@ -82,14 +60,7 @@ namespace RecordsUpdate
 		{
 
 			string ExcelName = GetString();
-			
-			Console.WriteLine(ExcelName);
-			Console.ReadLine();
-			
 			var file = Directory.GetFiles(path, ExcelName, SearchOption.AllDirectories);
-				
-			Console.WriteLine(file.Length);	
-			Console.ReadLine();
 			
 			if (file.Length == 0)
 			{
@@ -102,29 +73,10 @@ namespace RecordsUpdate
 			}
 			else
 			{
-				string completefile = "im in GetDirectory here";
-				Console.WriteLine(completefile);
-		//		Console.WriteLine(file[0]);
-				Console.ReadLine();
-				
-		//	Console.WriteLine(file.GetType());
-			
-				Console.ReadLine();
 				return file;
 			
 			}
 	
-				// if (file == null)
-				// {
-					// string returnval = "File doesn't exist!";
-					// return returnval;
-					// // Handle the file not being found
-				// }
-				// else
-				// {
-					// return;
-					// // The file variable has the *first* occurrence of that filename
-				// }	
 		}
 
 		
@@ -197,12 +149,6 @@ namespace RecordsUpdate
 				 FloorNumber(i,temp);
 			
 				 DeterminePurpose(i,temp);
-				 // Console.WriteLine(CustomDataArrays.division[i]);
-				 // Console.WriteLine(CustomDataArrays.number[i]);
-				 // Console.WriteLine(CustomDataArrays.floor[i]);
-				 // Console.WriteLine(CustomDataArrays.riser[i]);
-				 // Console.WriteLine(CustomDataArrays.sio[i]);
-				 // Console.WriteLine(CustomDataArrays.cubicle[i]);
 						
 			     row++;			
 			}			
@@ -228,20 +174,9 @@ namespace RecordsUpdate
 		static void FloorNumber(int i, string temp)
 		{
 		
-			 string MyString = temp;
-			 
+			 string MyString = temp; 
 			 char secondletter = MyString[1];
-			 
-		// string tempor = MyString.Substring(1,1);
-		// string trimmedtemp = tempor.Trim();
-		
-		
-			// Console.WriteLine(firstletter);
-			// Console.WriteLine(secondletter);
-				
-				
-			// Console.WriteLine(MyString.Substring(0,2));
-			// Console.ReadLine();
+
 			
 			 if(MyString == "MPOE")
 			 {				
@@ -308,13 +243,11 @@ namespace RecordsUpdate
 				{
 					//put empty string into database					  
 					string cmd = "UPDATE [SERVICE MAIN TABLE] SET Divn='" + CustomDataArrays.division[j] + "',[First Name]='" + CustomDataArrays.first[j] + "',Purpose='" + CustomDataArrays.purpose[j] + "',[Last Name]='" + CustomDataArrays.last[j] + "', FLOOR='" + CustomDataArrays.floor[j] + "',RISER='" + CustomDataArrays.riser[j] + "',SIO='" + CustomDataArrays.sio[j] + "',CUBICLE='" + CustomDataArrays.cubicle[j] +  "',PCAUpdtDt='" + date + "',DivnChgDt='" + date + "' WHERE [Phone Nbr]= '" + CustomDataArrays.number[j] + "'";			
-					//"',[ARB Program//Project]='" + CustomDataArrays.purpose[j] +
 					Modify = new OleDbCommand(cmd, MyConn);
 					changedValues = Modify.ExecuteNonQuery();	
-					// Console.WriteLine(changedValues);
-					
+			
 				}
-				// Console.WriteLine("after console writes:");
+
 			
 			}
 			
@@ -429,13 +362,8 @@ namespace RecordsUpdate
 			set {p_cubicle = value;}
 		 
 			}
-			
 
-		 
-	
 	}
-	
-	
 	
 }
 	
