@@ -398,7 +398,7 @@ namespace RecordsUpdate
 				 point[i].Number = Convert.ToString(((Excel.Range)excelWorksheet.Cells[row, 6]).Value2);
 				 point[i].Riser = Convert.ToString(((Excel.Range)excelWorksheet.Cells[row, 9]).Value2);
 				 point[i].Cubicle = Convert.ToString(((Excel.Range)excelWorksheet.Cells[row, 13]).Value2);
-
+				 point[i].Cubicle = point[i].Cubicle.Trim();
 				 try
 				 {
 					 string cmd = "UPDATE [SERVICE MAIN TABLE] SET Divn='" + point[i].Division + "',[First Name]='" + point[i].First + "',Purpose='" + point[i].Purpose + "',[Last Name]='" + point[i].Last + "', FLOOR='" + point[i].Floor + "',RISER='" + point[i].Riser + "',SIO='" + point[i].Sio + "',CUBICLE='" + point[i].Cubicle +  "',PCAUpdtDt='" + date + "',DivnChgDt='" + date + "' WHERE [Phone Nbr]= '" + point[i].Number + "'";			
